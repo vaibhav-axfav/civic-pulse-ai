@@ -11,7 +11,6 @@ app.use(express.json());
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-// System instruction for Gemini 3.8 Flash
 const SYSTEM_INSTRUCTION = `You are Civic Pulse AI, an emergency triage assistant. 
 Analyze citizen reports and return a strict JSON object with:
 - category: (e.g., Road Hazard, Flooding, Public Safety, Medical, Infrastructure)
