@@ -1,4 +1,5 @@
-# Civic Pulse AI — Real-Time Community Incident & Response Platform
+# Civic Pulse AI 
+Real-Time Community Incident & Response Platform
 
 Civic Pulse AI is a real-time civic intelligence and emergency triage application built for local communities. Powered by **Google Gemini 3.8 Flash** and hosted on **Google Cloud**, Civic Pulse AI processes multimodal community reports (text, voice, photos) to classify hazards, extract geotags, and auto-route actionable alerts to local authorities and citizens.
 
