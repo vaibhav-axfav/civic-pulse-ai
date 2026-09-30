@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Civic Pulse AI - Emergency Triage</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex items-center justify-center p-4">
+  <div class="max-w-xl w-full bg-gray-800 rounded-xl shadow-2xl p-6 border border-gray-700">
+    <h1 class="text-2xl font-bold text-red-500 mb-2 flex items-center gap-2">
+      🚨 Civic Pulse AI <span class="text-sm font-normal text-gray-400">Emergency Triage</span>
+    </h1>
+    <p class="text-gray-400 text-sm mb-4">Enter citizen emergency report details below for instant AI categorization and dispatch triage.</p>
+
+    <div class="mb-4">
+      <textarea id="reportInput" rows="4" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-100 focus:outline-none focus:border-red-500" placeholder="e.g., Massive water pipe burst near local market..."></textarea>
+    </div>
+
+    <button onclick="submitReport()" id="submitBtn" class="w-full bg-red-600 hover:bg-red-700 font-semibold py-3 rounded-lg transition duration-200">
+      Analyze & Triage Report
+    </button>
+
+    <div id="resultCard" class="mt-6 hidden bg-gray-900 border border-gray-700 rounded-lg p-4 space-y-4">
+      <div class="flex justify-between items-center">
+        <span id="resCategory" class="px-3 py-1 bg-blue-900 text-blue-300 text-xs font-bold rounded-full"></span>
+        <span id="resSeverity" class="px-3 py-1 text-xs font-bold rounded-full"></span>
+      </div>
+      <div>
+        <h3 class="text-xs font-semibold text-gray-400 uppercase">Actionable Summary</h3>
+        <p id="resSummary" class="text-sm mt-1 text-gray-200"></p>
+      </div>
+      <div>
+        <h3 class="text-xs font-semibold text-gray-400 uppercase">Safety Recommendations</h3>
+        <ul id="resSafety" class="list-disc list-inside text-sm mt-1 text-gray-300 space-y-1"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function submitReport() {
+      const report = document.getElementById('reportInput').value.trim();
+      const btn = document.getElementById('submitBtn');
+      const resultCard = document.getElementById('resultCard');
+      
+      if (!report) return alert('Please enter a report description.');
+
+      btn.disabled = true;
+      btn.innerText = 'Analyzing...';
+      resultCard.classList.add('hidden');
+
+      try {
+        const res = await fetch('http://localhost:8080/api/triage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ report })
+        });
+
+        const data = await res.json();
+        if (!data.success) throw new Error('Triage failed');
+
+        const t = data.triage;
+        document.getElementById('resCategory').innerText = t.category;
+        
+        const sevBadge = document.getElementById('resSeverity');
+        sevBadge.innerText = `Severity Level: ${t.severity_score}/5`;
+        sevBadge.className = `px-3 py-1 text-xs font-bold rounded-full ${t.severity_score >= 4 ? 'bg-red-900 text-red-300' : 'bg-yellow-900 text-yellow-300'}`;
+
+        document.getElementById('resSummary').innerText = t.actionable_summary;
+        
+        const safetyList = document.getElementById('resSafety');
+        safetyList.innerHTML = '';
+        t.safety_recommendations.forEach(tip => {
+          const li = document.createElement('li');
+          li.innerText = tip;
+          safetyList.appendChild(li);
+        });
+
+        resultCard.classList.remove('hidden');
+      } catch (err) {
+        alert('Error communicating with backend server.');
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Analyze & Triage Report';
+      }
+    }
+  </script>
+</body>
+</html>

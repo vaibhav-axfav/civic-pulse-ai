@@ -1,15 +1,15 @@
 {
   "name": "civic-pulse-ai",
   "version": "1.0.0",
-  "description": "Real-Time Community Incident & Response Platform powered by Gemini 3.8 Flash",
+  "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
     "@google/genai": "^0.1.1",
-    "express": "^4.19.2",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "cors": "^2.8.5"
+    "express": "^4.19.2"
   }
 }
